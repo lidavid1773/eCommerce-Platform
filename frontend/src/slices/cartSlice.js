@@ -19,7 +19,9 @@ const cartSlice = createSlice({
       // Update item's quantity if it exists (item contains a qty field)
       if (itemExists) {
         state.cartItems = state.cartItems.map((currentItem) =>
-          currentItem._id === itemExists._id ? item : currentItem
+          currentItem._id === itemExists._id
+            ? { ...currentItem, qty: currentItem.qty + item.qty }
+            : currentItem
         );
       } else {
         state.cartItems = [...state.cartItems, item];
