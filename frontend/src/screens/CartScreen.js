@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Row,
   Col,
@@ -15,6 +15,7 @@ import { addToCart, removeFromCart } from "../slices/cartSlice";
 
 const CartScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
@@ -25,6 +26,11 @@ const CartScreen = () => {
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
+  };
+
+  const checkoutHandler = () => {
+    // If not logged in, redirect to login. Otherwise, proceed to shipping
+    navigate("/login?redirect=/shipping");
   };
 
   return (
@@ -95,6 +101,7 @@ const CartScreen = () => {
                 type="button"
                 className="btn-block"
                 disabled={cartItems.length === 0}
+                onClick={checkoutHandler}
               >
                 Proceed To Checkout
               </Button>
