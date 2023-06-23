@@ -15,7 +15,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   generateJWT(res, user._id);
 
-  res.json({
+  res.status(200).json({
     _id: user._id,
     name: user.name,
     email: user.email,
@@ -65,12 +65,43 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 // @route GET /api/users/profile
 const getUserProfile = asyncHandler(async (req, res) => {
-  res.send("Get user profile");
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    isAdmin: user.isAdmin
+  });
 });
 
 // @route PUT /api/users/profile
 const updateUserProfile = asyncHandler(async (req, res) => {
-  res.send("Update user profile");
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  // Update fields only if they are provided in body, except for password since it is hashed.
+  user.name = req.body.name || user.name;
+  user.email = req.body.email || user.email;
+  if (req.body.password) user.password = req.body.password;
+
+  const updatedUser = await user.save();
+
+  res.status(200).json({
+    _id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    isAdmin: updatedUser.isAdmin
+  });
 });
 
 // *Admin functionality*
