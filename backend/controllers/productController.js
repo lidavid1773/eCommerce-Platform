@@ -46,7 +46,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   if (!product) {
     res.status(404);
-    throw new Error("Resource not found");
+    throw new Error("Product not found");
   }
 
   product.name = name;
@@ -61,4 +61,23 @@ const updateProduct = asyncHandler(async (req, res) => {
   res.json(updatedProduct);
 });
 
-export { getProducts, getProductById, createProduct, updateProduct };
+// @route DEL /api/products/:id
+const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  await Product.deleteOne({ _id: product._id });
+  res.status(200).json({ message: "Product deleted" });
+});
+
+export {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct
+};
